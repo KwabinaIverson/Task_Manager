@@ -1,4 +1,5 @@
 # task_management_ui
+Frontend of Task Management App
 
 ## Project setup
 ```
@@ -7,7 +8,10 @@ npm install
 
 ### Compiles and hot-reloads for development
 ```
-npm run serve
+npm run serve (runs app)
+```
+``
+npm run backend (runs fake REST API)
 ```
 
 ### Compiles and minifies for production
