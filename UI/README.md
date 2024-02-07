@@ -1,5 +1,5 @@
 # task_management_ui
-Frontend of Task Management App
+Frontend of Task Management App. Handles CRUD operations for both Users and Tasks.
 
 ## Project setup
 ```
