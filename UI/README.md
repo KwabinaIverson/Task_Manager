@@ -17,6 +17,3 @@ npm run backend (runs fake REST API)
 ```
 npm run build
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

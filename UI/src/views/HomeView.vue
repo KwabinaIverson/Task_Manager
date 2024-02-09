@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
+    <img alt="Vue logo" src="../assets/AgileFlowLogo2.png">
     <h1>AgileFlow</h1>
     <button
     class="sign-up"

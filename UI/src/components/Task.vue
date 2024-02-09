@@ -176,7 +176,7 @@ export default {
 
   .update-task {
     display: block;
-    background: #94a39c;
+    background: rgb(75, 74, 74);
     min-width: max-content;
     min-height: max-content;
   }
