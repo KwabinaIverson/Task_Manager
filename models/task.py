@@ -30,15 +30,14 @@ class Task(BaseModel, Base):
     - delete_task(self): Deletes the specified task.
     """
     __tablename__ = 'tasks'
-    task_name = Column(String(128), nullable=False)
-    user_id = Column(String(60), ForeignKey("users.id"), nullable=False)
-    task_description = Column(String(1024), nullable=False)
-    start_date = Column(DateTime, default=datetime.utcnow, nullable=False)
-    end_date = Column(DateTime, default=datetime.utcnow, nullable=False)
+    task_name = Column(String(128))
+    user_id = Column(String(60), ForeignKey("users.id"))
+    task_description = Column(String(1024))
+    start_date = Column(DateTime, default=datetime.utcnow)
+    end_date = Column(DateTime, default=datetime.utcnow)
     category = Column(String(128))
     
-    creator = relationship("User", backref='assigned_tasks', 
-                         cascade="all, delete, delete-orphan")
+    # creator = relationship("User", backref='assigned_tasks', cascade="all, delete, delete-orphan")
     
     def __init__(self, *args, **kwargs):
         """

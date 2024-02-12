@@ -24,7 +24,7 @@ class User(BaseModel, Base):
     
     tasks = relationship("Task", backref="creator", cascade="all, delete, delete-orphan")
     
-    groups = relationship("Group", backref="groups", cascade="all, delete, delete-orphan")
+    groups = relationship("Group", back_populates="users", cascade="all, delete, delete-orphan")
     
     def __init__(self, *args, **kwargs):
         """Constructor for User class."""

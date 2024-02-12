@@ -8,13 +8,15 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy import Column, String, ForeignKey, DateTime, Table
 
-group_users_association = Table(
+
+"""group_users_association = Table(
         'group_users', Base.metadata,
         Column('group_id', String(60), ForeignKey("groups.id"), 
-               nullable=False, default=uuid.uuid4, primary_key=True),
+               nullable=False, primary_key=True),
         Column('user_id', String(60), ForeignKey("users.id"), 
-               nullable=False, default=uuid.uuid4, primary_key=True)
+               nullable=False, primary_key=True)
     )
+"""
 
 class Group(BaseModel, Base):
     """
@@ -36,13 +38,12 @@ class Group(BaseModel, Base):
         - assign_task_to_group(self, group_id, group_task):  Assigns a task to the group.
     """
     __tablename__ = "groups"
-    user_id = Column(String(60), ForeignKey("users.id"), nullable=False)
     group_name = Column(String(128), nullable=False)
-    task_id = Column(String(60), ForeignKey("tasks.id"), nullable=False)
-    
+    # task_id = Column(String(60), ForeignKey("tasks.id"), nullable=False)
+    user_id = Column(String(60), ForeignKey("users.id"))
+
     # Associated with the table
-    users = relationship("User", secondary=group_users_association, 
-                         backref="groups", cascade="all, delete, delete-orphan")
+    users = relationship("User", back_populates="groups", single_parent=True, cascade="all, delete, delete-orphan")
     
     def __init__(self, *args, **kwargs):
         """

@@ -72,43 +72,18 @@ class TASKCommand(cmd.Cmd):
         If any parameter doesn’t fit with these requirements or can’t be recognized correctly by your program, it must be skipped.
 
         """
-        try:
-            if not arg:
-                raise SyntaxError("** class name missing **")
-
-            args = arg.split()
-            class_names = args[0].split(',')
-
-            for class_name in class_names:
-                kwargs = {}
-                class_args = args[1:]
-                for arg in class_args:
-                    key, _, value = arg.partition('=')
-                    if value.startswith('"') and value.endswith('"'):
-                        value = value[1:-1].replace('_', ' ').replace('\\"', '"')
-                    else:
-                        try:
-                            value = eval(value)
-                        except (NameError, SyntaxError):
-                            pass
-                    kwargs[key] = value
-
-                if class_name not in globals():
-                    print("** class doesn't exist **")
-                    continue
-
-                obj = globals()[class_name](**kwargs)
-                obj.save()
-                print("{}".format(obj.id))
-
-        except SyntaxError as e:
-            print(e)
-
-
-        except SyntaxError as e:
-            print(e)
-        except NameError as e:
-            print(e)
+        args = arg.split()
+        if len(args) == 0:
+            print("** class name missing **")
+            return False
+        if args[0] in classes:
+            new_dict = self._key_value_parser(args[1:])
+            instance = classes[args[0]](**new_dict)
+        else:
+            print("** class doesn't exist **")
+            return False
+        print(instance.id)
+        instance.save()
 
                 
     def do_show(self, arg):
@@ -166,11 +141,13 @@ class TASKCommand(cmd.Cmd):
         else:
             print("** class doesn't exist **")
             return False
-        for key in obj_dict:
-            obj_list.append(str(obj_dict[key]))
-        print("[", end="")
-        print(", ".join(obj_list), end="")
-        print("]")
+        
+        if obj_list is not None:
+            for key in obj_dict:
+                obj_list.append(str(obj_dict[key]))
+            print("[", end="")
+            print(", ".join(obj_list), end="")
+            print("]")
     
     def do_update(self, arg):
         """
@@ -178,38 +155,41 @@ class TASKCommand(cmd.Cmd):
 
         Usage: update <class_name> <id> <attribute_name> "<attribute_value>"
         """
-        args = arg.split()
-        if not args:
+        args = shlex.split(arg)
+        integers = ["number_rooms", "number_bathrooms", "max_guest",
+                    "price_by_night"]
+        floats = ["latitude", "longitude"]
+        if len(args) == 0:
             print("** class name missing **")
-        elif args[0] not in globals():
-            print("** class doesn't exist **")
-        elif len(args) == 1:
-            print("** instance id missing **")
-        elif len(args) == 2:
-            print("** attribute name missing **")
-        elif len(args) == 3:
-            print("** value missing **")
-        else:
-            class_name, obj_id, attr_name, attr_value = args[0], args[1], args[2], args[3]
-
-            key = "{}.{}".format(class_name, obj_id)
-            all_objs = models.storage.all()
-
-            if key not in all_objs:
-                print("** no instance found **")
-            elif attr_name == "id" or attr_name == "created_at" or attr_name == "updated_at":
-                print("** cannot update id, created_at, or updated_at **")
-            else:
-                obj = all_objs[key]
-                if hasattr(obj, attr_name):
-                    attr_type = type(getattr(obj, attr_name))
-                    try:
-                        setattr(obj, attr_name, attr_type(attr_value))
-                        obj.save()
-                    except (ValueError, TypeError):
-                        print(f"** invalid value for {attr_name} **")
+        elif args[0] in classes:
+            if len(args) > 1:
+                k = args[0] + "." + args[1]
+                if k in models.storage.all():
+                    if len(args) > 2:
+                        if len(args) > 3:
+                            if args[0] == "Place":
+                                if args[2] in integers:
+                                    try:
+                                        args[3] = int(args[3])
+                                    except:
+                                        args[3] = 0
+                                elif args[2] in floats:
+                                    try:
+                                        args[3] = float(args[3])
+                                    except:
+                                        args[3] = 0.0
+                            setattr(models.storage.all()[k], args[2], args[3])
+                            models.storage.all()[k].save()
+                        else:
+                            print("** value missing **")
+                    else:
+                        print("** attribute name missing **")
                 else:
-                    print(f"** attribute {attr_name} not found in {class_name} **")
+                    print("** no instance found **")
+            else:
+                print("** instance id missing **")
+        else:
+            print("** class doesn't exist **")
 
 
 if __name__ == '__main__':
