@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """User that inherits from BaseModel"""
 
+import models
 from models.base_model import BaseModel, Base
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer, MetaData
@@ -16,15 +17,19 @@ class User(BaseModel, Base):
     - first_name: string - empty string
     - last_name: string - empty string
     """
-    __tablename__ = "users"
-    email = Column(String(128), nullable=False)
-    password = Column(String(128), nullable=False)
-    first_name = Column(String(128))
-    last_name = Column(String(128))
-    
-    tasks = relationship("Task", backref="creator", cascade="all, delete, delete-orphan")
-    
-    groups = relationship("Group", back_populates="users", cascade="all, delete, delete-orphan")
+    if models.sqlStorage_t == "db":
+        __tablename__ = "users"
+        email = Column(String(128), nullable=False)
+        password = Column(String(128), nullable=False)
+        first_name = Column(String(128))
+        last_name = Column(String(128))
+        tasks = relationship("Task", backref="creator", cascade="all, delete, delete-orphan")
+        groups = relationship("Group", back_populates="users", cascade="all, delete, delete-orphan")
+    else:
+        email = ""
+        password = ""
+        first_name = ""
+        last_name = ""
     
     def __init__(self, *args, **kwargs):
         """Constructor for User class."""

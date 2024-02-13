@@ -1,6 +1,7 @@
 #!/usr/bin/bash
 """Group class takes care of creating groups and keeping track of list of tasks."""
 
+import models
 import uuid
 from models.base_model import BaseModel, Base
 from datetime import datetime
@@ -37,13 +38,15 @@ class Group(BaseModel, Base):
         - remove_user_from_group(self, group_id, user_id): Remove user from the group.
         - assign_task_to_group(self, group_id, group_task):  Assigns a task to the group.
     """
-    __tablename__ = "groups"
-    group_name = Column(String(128), nullable=False)
-    # task_id = Column(String(60), ForeignKey("tasks.id"), nullable=False)
-    user_id = Column(String(60), ForeignKey("users.id"))
-
-    # Associated with the table
-    users = relationship("User", back_populates="groups", single_parent=True, cascade="all, delete, delete-orphan")
+    if models.sqlStorage_t == "db":
+        __tablename__ = "groups"
+        group_name = Column(String(128), nullable=False)
+        # task_id = Column(String(60), ForeignKey("tasks.id"), nullable=False)
+        user_id = Column(String(60), ForeignKey("users.id"))
+        # Associated with the table
+        users = relationship("User", back_populates="groups", single_parent=True, cascade="all, delete, delete-orphan")
+    else:
+        group_name = ""
     
     def __init__(self, *args, **kwargs):
         """

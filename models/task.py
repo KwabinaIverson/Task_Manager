@@ -29,15 +29,21 @@ class Task(BaseModel, Base):
     - set_due_date(self): Sets the starting and ending dates for the task.
     - delete_task(self): Deletes the specified task.
     """
-    __tablename__ = 'tasks'
-    task_name = Column(String(128))
-    user_id = Column(String(60), ForeignKey("users.id"))
-    task_description = Column(String(1024))
-    start_date = Column(DateTime, default=datetime.utcnow)
-    end_date = Column(DateTime, default=datetime.utcnow)
-    category = Column(String(128))
-    
-    # creator = relationship("User", backref='assigned_tasks', cascade="all, delete, delete-orphan")
+    if models.sqlStorage_t == "db":
+        __tablename__ = 'tasks'
+        task_name = Column(String(128))
+        user_id = Column(String(60), ForeignKey("users.id"))
+        task_description = Column(String(1024))
+        start_date = Column(DateTime, default=datetime.utcnow)
+        end_date = Column(DateTime, default=datetime.utcnow)
+        category = Column(String(128))
+        # creator = relationship("User", backref='assigned_tasks', cascade="all, delete, delete-orphan")
+    else:
+        task_name = ""
+        task_description = ""
+        start_date = ""
+        end_date = ""
+        category = ""
     
     def __init__(self, *args, **kwargs):
         """
