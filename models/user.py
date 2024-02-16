@@ -6,6 +6,7 @@ from models.base_model import BaseModel, Base
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer, MetaData
 from sqlalchemy.orm import relationship, backref
+from hashlib import md5
 
 class User(BaseModel, Base):
     """
@@ -21,8 +22,8 @@ class User(BaseModel, Base):
         __tablename__ = "users"
         email = Column(String(128), nullable=False)
         password = Column(String(128), nullable=False)
-        first_name = Column(String(128))
-        last_name = Column(String(128))
+        first_name = Column(String(128), nullable=False)
+        last_name = Column(String(128), nullable=False)
         tasks = relationship("Task", backref="creator", cascade="all, delete, delete-orphan")
         groups = relationship("Group", back_populates="users", cascade="all, delete, delete-orphan")
     else:
@@ -34,3 +35,9 @@ class User(BaseModel, Base):
     def __init__(self, *args, **kwargs):
         """Constructor for User class."""
         super().__init__(*args, **kwargs)
+
+    def __setattr__(self, name, value):
+        """Encrypt password with md5"""
+        if name == "password":
+             value = md5(value.encode()).hexdigest()
+        super().__setattr__(name, value)

@@ -10,7 +10,8 @@ from sqlalchemy.orm import relationship, backref
 from sqlalchemy import Column, String, ForeignKey, DateTime, Table
 
 
-"""group_users_association = Table(
+"""
+group_users_association = Table(
         'group_users', Base.metadata,
         Column('group_id', String(60), ForeignKey("groups.id"), 
                nullable=False, primary_key=True),
